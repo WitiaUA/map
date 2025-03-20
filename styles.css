@@ -1,0 +1,32 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #000;
+}
+
+.container {
+    position: relative;
+    width: 80vw;
+    max-width: 1200px;
+}
+
+.background {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.marker {
+    position: absolute;
+    width: 5%;
+    transform: translate(-50%, -50%);
+}
+
+.marker img {
+    width: 100%;
+    height: auto;
+}
