@@ -11,9 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
     mapContainer.addEventListener("wheel", function (event) {
         event.preventDefault();
 
-        const scaleFactor = 0.1;
+        const scaleFactor = 0.05; // Менший крок для плавного масштабування
         let newScale = scale + (event.deltaY < 0 ? scaleFactor : -scaleFactor);
-        newScale = Math.max(0.5, Math.min(3, newScale)); // Обмеження масштабу
+        newScale = Math.max(0.8, Math.min(2, newScale)); // Обмеження масштабу
 
         // Отримуємо координати мишки відносно карти
         const rect = map.getBoundingClientRect();
@@ -57,9 +57,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateTransform() {
         map.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
 
-        // Тепер мітки також масштабуються разом із картою
+        // Маркери пропорційно збільшуються, але не стають занадто маленькими/великими
         markers.forEach(marker => {
-            marker.style.transform = `translate(-50%, -50%) scale(${scale})`;
+            marker.style.transform = `translate(-50%, -50%) scale(${1 + (scale - 1) * 0.5})`;
         });
     }
 });
