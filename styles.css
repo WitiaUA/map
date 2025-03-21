@@ -23,6 +23,7 @@ body {
     top: 0;
     left: 0;
     transform-origin: top left;
+    transition: transform 0.1s ease-out; /* Плавність масштабування */
 }
 
 /* Фонова картинка */
@@ -37,7 +38,7 @@ body {
     position: absolute;
     width: 4%;
     transform: translate(-50%, -50%);
-    transition: transform 0.1s ease-out;
+    transition: transform 0.1s ease-out; /* Плавне масштабування маркерів */
 }
 
 .marker img {
