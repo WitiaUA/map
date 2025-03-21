@@ -38,6 +38,7 @@ body {
     position: absolute;
     width: 4%;
     transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out;
 }
 
 .marker img {
