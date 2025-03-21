@@ -20,9 +20,10 @@ body {
     display: block;
 }
 
+/* Позначки (включаючи Пердичіум) */
 .marker {
     position: absolute;
-    width: 5%;
+    width: 5%; /* Налаштуй розмір */
     transform: translate(-50%, -50%);
 }
 
