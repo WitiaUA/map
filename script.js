@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const map = document.querySelector(".map");
     const mapContainer = document.querySelector(".map-container");
+    const markers = document.querySelectorAll(".marker");
     let scale = 1;
     let translateX = 0, translateY = 0;
     let startX, startY, isDragging = false;
@@ -54,8 +55,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateTransform() {
         map.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
 
-        // Оновлюємо масштаб міток
-        document.querySelectorAll(".marker").forEach(marker => {
+        // ✅ Фіксуємо розмір міток
+        markers.forEach(marker => {
             marker.style.transform = `translate(-50%, -50%) scale(${1 / scale})`;
         });
     }
