@@ -1,42 +1,66 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const map = document.querySelector(".map");
     const mapContainer = document.querySelector(".map-container");
     let scale = 1;
     let translateX = 0, translateY = 0;
     let startX, startY, isDragging = false;
 
-    // Масштабування колесом миші
-    mapContainer.addEventListener("wheel", function(event) {
+    // Масштабування з фокусом на мишку
+    mapContainer.addEventListener("wheel", function (event) {
         event.preventDefault();
-        let scaleAmount = event.deltaY > 0 ? 0.9 : 1.1;
-        scale *= scaleAmount;
-        scale = Math.max(0.5, Math.min(3, scale)); // Обмеження масштабу
 
-        map.style.transform = `scale(${scale})`;
+        const scaleFactor = 0.1;
+        let newScale = scale + (event.deltaY < 0 ? scaleFactor : -scaleFactor);
+        newScale = Math.max(0.5, Math.min(3, newScale)); // Обмеження масштабу
+
+        // Отримуємо координати мишки відносно карти
+        const rect = map.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        // Обчислюємо зміщення для центрування мишки
+        const deltaX = (mouseX / scale) * (newScale - scale);
+        const deltaY = (mouseY / scale) * (newScale - scale);
+
+        translateX -= deltaX;
+        translateY -= deltaY;
+
+        scale = newScale;
+        updateTransform();
     });
 
-    // Перетягування мишею
-    mapContainer.addEventListener("mousedown", function(event) {
+    // Перетягування карти мишею
+    mapContainer.addEventListener("mousedown", function (event) {
         isDragging = true;
         startX = event.clientX - translateX;
         startY = event.clientY - translateY;
         map.style.cursor = "grabbing";
     });
 
-    window.addEventListener("mousemove", function(event) {
+    window.addEventListener("mousemove", function (event) {
         if (!isDragging) return;
         translateX = event.clientX - startX;
         translateY = event.clientY - startY;
         limitMapPosition();
-        map.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        updateTransform();
     });
 
-    window.addEventListener("mouseup", function() {
+    window.addEventListener("mouseup", function () {
         isDragging = false;
         map.style.cursor = "grab";
     });
 
-    // Обмежуємо рух карти
+    // Оновлення трансформації карти
+    function updateTransform() {
+        map.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+
+        // Оновлюємо масштаб міток
+        document.querySelectorAll(".marker").forEach(marker => {
+            marker.style.transform = `translate(-50%, -50%) scale(${1 / scale})`;
+        });
+    }
+
+    // Обмеження руху карти
     function limitMapPosition() {
         const mapRect = map.getBoundingClientRect();
         const containerRect = mapContainer.getBoundingClientRect();
