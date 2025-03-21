@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     const markers = [
-        { id: "perdichium", x: 74.25%, y: 42.99%, link: "https://tsebuleve.wiki.gg/uk/wiki/Кратер_Пердичіуму" },
+        { id: "perdichium", x: 40.25, y: 42.99, link: "https://tsebuleve.wiki.gg/uk/wiki/Кратер_Пердичіуму" },
         { id: "marker1", x: 30, y: 40, link: "https://uk.minecraft.wiki/" },
         { id: "marker2", x: 60, y: 70, link: "https://uk.minecraft.wiki/" }
     ];
