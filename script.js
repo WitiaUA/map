@@ -1,87 +1,86 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const mapContainer = document.querySelector(".map-container");
     const map = document.querySelector(".map");
-
     let scale = 1;
-    let startX, startY, offsetX = 0, offsetY = 0;
-    let isDragging = false;
+    let startX, startY, isDragging = false;
+    let translateX = 0, translateY = 0;
 
-    // Масштабування мишею (колесо)
-    mapContainer.addEventListener("wheel", function(event) {
+    const markers = [
+        { id: "perdichium", x: 40.25, y: 42.99 },
+        { id: "marker1", x: 30, y: 40 },
+        { id: "marker2", x: 60, y: 70 }
+    ];
+
+    function updateMarkers() {
+        const bg = document.querySelector(".background");
+        const rect = bg.getBoundingClientRect();
+
+        markers.forEach(marker => {
+            const el = document.getElementById(marker.id);
+            el.style.left = `${rect.left + (marker.x * rect.width / 100)}px`;
+            el.style.top = `${rect.top + (marker.y * rect.height / 100)}px`;
+        });
+    }
+
+    // Масштабування колесом миші
+    window.addEventListener("wheel", function(event) {
         event.preventDefault();
-        let scaleAmount = event.deltaY * -0.001;
-        scale += scaleAmount;
+        const scaleAmount = event.deltaY > 0 ? 0.9 : 1.1;
+        scale *= scaleAmount;
         scale = Math.min(Math.max(0.5, scale), 3); // Обмеження масштабу
-        map.style.transform = `translate(-50%, -50%) scale(${scale})`;
+
+        map.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        updateMarkers();
     });
 
-    // Початок перетягування мишею
-    mapContainer.addEventListener("mousedown", function(event) {
+    // Перетягування мишею
+    map.addEventListener("mousedown", function(event) {
         isDragging = true;
-        startX = event.clientX - offsetX;
-        startY = event.clientY - offsetY;
-        mapContainer.style.cursor = "grabbing";
+        startX = event.clientX - translateX;
+        startY = event.clientY - translateY;
+        map.style.cursor = "grabbing";
     });
 
-    // Переміщення карти
-    mapContainer.addEventListener("mousemove", function(event) {
+    window.addEventListener("mousemove", function(event) {
         if (!isDragging) return;
-        offsetX = event.clientX - startX;
-        offsetY = event.clientY - startY;
-        map.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) scale(${scale})`;
+        translateX = event.clientX - startX;
+        translateY = event.clientY - startY;
+        map.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        updateMarkers();
     });
 
-    // Відпускання миші
-    mapContainer.addEventListener("mouseup", function() {
+    window.addEventListener("mouseup", function() {
         isDragging = false;
-        mapContainer.style.cursor = "grab";
+        map.style.cursor = "grab";
     });
 
-    // Додавання підтримки для сенсорних екранів
-    let touchStartX, touchStartY;
-    mapContainer.addEventListener("touchstart", function(event) {
-        if (event.touches.length === 1) { // Перетягування
-            isDragging = true;
-            touchStartX = event.touches[0].clientX - offsetX;
-            touchStartY = event.touches[0].clientY - offsetY;
-        }
-    });
+    // Сенсорне масштабування (жести двома пальцями)
+    let touchStartDist = 0;
 
-    mapContainer.addEventListener("touchmove", function(event) {
-        if (!isDragging || event.touches.length !== 1) return;
-        event.preventDefault();
-        offsetX = event.touches[0].clientX - touchStartX;
-        offsetY = event.touches[0].clientY - touchStartY;
-        map.style.transform = `translate(calc(-50% + ${offsetX}px), calc(-50% + ${offsetY}px)) scale(${scale})`;
-    });
+    function getDistance(touches) {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
 
-    mapContainer.addEventListener("touchend", function() {
-        isDragging = false;
-    });
-
-    // Додавання підтримки жесту для масштабування
-    let touchDistanceStart = 0;
-    mapContainer.addEventListener("touchstart", function(event) {
+    window.addEventListener("touchstart", function(event) {
         if (event.touches.length === 2) {
-            touchDistanceStart = Math.hypot(
-                event.touches[0].clientX - event.touches[1].clientX,
-                event.touches[0].clientY - event.touches[1].clientY
-            );
+            touchStartDist = getDistance(event.touches);
         }
     });
 
-    mapContainer.addEventListener("touchmove", function(event) {
+    window.addEventListener("touchmove", function(event) {
         if (event.touches.length === 2) {
             event.preventDefault();
-            let touchDistanceEnd = Math.hypot(
-                event.touches[0].clientX - event.touches[1].clientX,
-                event.touches[0].clientY - event.touches[1].clientY
-            );
-            let scaleChange = (touchDistanceEnd / touchDistanceStart) - 1;
-            scale += scaleChange;
+            const newDist = getDistance(event.touches);
+            const scaleAmount = newDist / touchStartDist;
+            scale *= scaleAmount;
             scale = Math.min(Math.max(0.5, scale), 3);
-            map.style.transform = `translate(-50%, -50%) scale(${scale})`;
-            touchDistanceStart = touchDistanceEnd;
+
+            map.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+            updateMarkers();
+            touchStartDist = newDist;
         }
     });
+
+    updateMarkers();
 });
