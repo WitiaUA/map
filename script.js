@@ -57,9 +57,9 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateTransform() {
         map.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
 
-        // Фіксуємо розмір міток, щоб вони не зменшувалися при масштабуванні
+        // Тепер мітки також масштабуються разом із картою
         markers.forEach(marker => {
-            marker.style.transform = `translate(-50%, -50%) scale(${1 / scale})`;
+            marker.style.transform = `translate(-50%, -50%) scale(${scale})`;
         });
     }
 });
