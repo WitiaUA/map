@@ -8,22 +8,35 @@ body {
     background-color: #000;
 }
 
-.container {
+/* Контейнер для карти */
+.map-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
     position: relative;
-    width: 80vw;
-    max-width: 1200px;
+    cursor: grab;
 }
 
+/* Карта */
+.map {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    transform-origin: center;
+}
+
+/* Фонова картинка */
 .background {
+    display: block;
     width: 100%;
     height: auto;
-    display: block;
 }
 
-/* Позначки (включаючи Пердичіум) */
+/* Позначки */
 .marker {
     position: absolute;
-    width: 10%; /* Налаштуй розмір */
+    width: 5%; /* Регулюй розмір */
     transform: translate(-50%, -50%);
 }
 
